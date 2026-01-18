@@ -16,10 +16,8 @@ app.use(cors());
 app.use(express.json()); // parse JSON
 app.use(express.urlencoded({ extended: true })); // parse form data
 
-
 // Routes
 app.use('/api/auth', authRoute);
-
 
 // error middleware
 app.use(errorMiddleware);

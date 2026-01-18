@@ -12,7 +12,6 @@ const register = asyncWrapper (async (req, res, next) => {
     if (userExists) {
         return next(new ErrorHandlerClass('User already exists', 400));
     }
-
     const user = await User.create({
         name,
         email,
@@ -35,8 +34,6 @@ const register = asyncWrapper (async (req, res, next) => {
     });
 
 });
-
-
 
 
 

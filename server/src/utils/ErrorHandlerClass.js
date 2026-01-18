@@ -1,5 +1,3 @@
-
-
 // Creating a class to handle errors coming from controllers
 class ErrorHandler extends Error {
     constructor(message, statusCode) {
