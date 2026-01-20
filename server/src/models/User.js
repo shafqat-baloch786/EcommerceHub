@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema({
 userSchema.pre('save', async function () {
 
     // If password field is not modified (usually in edit profile), then skip logic
-    if (!this.isModified("Password")) {
+    if (!this.isModified("password")) {
         return;
     }
 

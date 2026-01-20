@@ -40,7 +40,7 @@ const register = asyncWrapper (async (req, res, next) => {
 // User login/sign in
 const login = asyncWrapper (async (req, res, next) => {
     const { email, password } = req.body;
-    const user = User.findOne({ email });
+    const user = await User.findOne({ email });
 
     // If user does not exist in db with this email
     if(!user) {
@@ -48,7 +48,7 @@ const login = asyncWrapper (async (req, res, next) => {
     }
 
     // If enterd password does not match with saved one
-    const isPasswordMatched = user.comparePassword(password);
+    const isPasswordMatched = await user.comparePassword(password);
     if(!isPasswordMatched) {
         return next(new ErrorHandlerClass("Email or password invalid!", 400));
     }
