@@ -44,13 +44,13 @@ const login = asyncWrapper (async (req, res, next) => {
 
     // If user does not exist in db with this email
     if(!user) {
-        return next(new ErrorHandlerClass("Email or password invalid!", 400));
+        return next(new ErrorHandlerClass("User not found!", 404));
     }
 
     // If enterd password does not match with saved one
     const isPasswordMatched = user.comparePassword(password);
     if(!isPasswordMatched) {
-        return next(new ErroHandlerClass("Email or password invalid!", 400));
+        return next(new ErrorHandlerClass("Email or password invalid!", 400));
     }
 
     const token = generateToken(user._id);
