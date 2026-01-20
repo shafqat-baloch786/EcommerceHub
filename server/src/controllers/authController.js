@@ -20,7 +20,7 @@ const register = asyncWrapper (async (req, res, next) => {
     });
 
     // Genereate json web token and add to response
-    const token = generateToken(user.id);
+    const token = generateToken(user._id);
 
     return res.status(201).json({
         success: true,
@@ -37,6 +37,40 @@ const register = asyncWrapper (async (req, res, next) => {
 
 
 
+// User login/sign in
+const login = asyncWrapper (async (req, res, next) => {
+    const { email, password } = req.body;
+    const user = User.findOne({ email });
+
+    // If user does not exist in db with this email
+    if(!user) {
+        return next(new ErrorHandlerClass("Email or password invalid!", 400));
+    }
+
+    // If enterd password does not match with saved one
+    const isPasswordMatched = user.comparePassword(password);
+    if(!isPasswordMatched) {
+        return next(new ErroHandlerClass("Email or password invalid!", 400));
+    }
+
+    const token = generateToken(user._id);
+
+    // Success response
+    return res.status(200).json({
+        success: true,
+        messag: "User logged in successfully!",
+        token,
+        user: {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            avatar: user.avatar
+        }
+    })
+});
+
+
 module.exports = {
-    register
+    register,
+    login
 }
