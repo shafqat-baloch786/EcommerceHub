@@ -4,7 +4,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const asyncWrapper = require('./utils/asyncWrapper');
 const authRoute = require('./routes/authRoute');
-const errorMiddleware = require('./middlewares/errorHanlder');
+const errorMiddleware = require('./middlewares/errorHandler');
 
 // HTTP headers for security
 app.use(helmet());
