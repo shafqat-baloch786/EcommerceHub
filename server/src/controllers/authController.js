@@ -69,8 +69,20 @@ const login = asyncWrapper (async (req, res, next) => {
     })
 });
 
+// Current user profile
+const me = asyncWrapper(async (req, res, next) => {
+    return res.status(200).json({
+        id: req.user._id,
+        name: req.user.name,
+        email: req.user.email,
+        avatar: req.user.avatar,
+        role: req.user.role,
+    })
+});
+
 
 module.exports = {
     register,
-    login
+    login,
+    me
 }
