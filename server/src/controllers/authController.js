@@ -4,7 +4,7 @@ const ErrorHandlerClass = require('../utils/ErrorHandlerClass');
 const generateToken = require('../utils/generateToken');
 
 // User registration/signup
-const register = asyncWrapper (async (req, res, next) => {
+const register = asyncWrapper(async (req, res, next) => {
     const { name, email, password, avatar } = req.body;
 
     // Check if user already exists
@@ -38,18 +38,18 @@ const register = asyncWrapper (async (req, res, next) => {
 
 
 // User login/sign in
-const login = asyncWrapper (async (req, res, next) => {
+const login = asyncWrapper(async (req, res, next) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
 
     // If user does not exist in db with this email
-    if(!user) {
+    if (!user) {
         return next(new ErrorHandlerClass("User not found!", 404));
     }
 
     // If enterd password does not match with saved one
     const isPasswordMatched = await user.comparePassword(password);
-    if(!isPasswordMatched) {
+    if (!isPasswordMatched) {
         return next(new ErrorHandlerClass("Email or password invalid!", 400));
     }
 
@@ -80,9 +80,39 @@ const me = asyncWrapper(async (req, res, next) => {
     })
 });
 
+// Edit current user profile
+const editMe = asyncWrapper(async (req, res, next) => {
+    const userId = req.user._id;
+    const { name, email, avatar } = req.body;
+
+    const updates = {};
+    if (name) {
+        updates.name = name
+    }
+    if (email) {
+        updates.email = email
+    }
+    if (avatar) {
+        updates.avatar = avatar
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(userId, updates, {
+        new: true,
+        runValidators: true,
+        context: 'query'
+    }).select('_id name email avatar role')
+
+    return res.status(200).json({
+        success: true,
+        message: "User updated successfuly!",
+        user: updatedUser
+    })
+})
+
 
 module.exports = {
     register,
     login,
-    me
+    me,
+    editMe
 }
