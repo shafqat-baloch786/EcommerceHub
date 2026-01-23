@@ -26,7 +26,7 @@
 | POST   | /auth/login         | Login and receive JWT token                 |
 | POST   | /auth/refresh-token | Refresh JWT token                           |
 | GET    | /auth/me            | Get current user profile (protected)        |
-| PUT    | /auth/me            | Update user profile (protected)             |
+| PATCH    | /auth/me            | Update user profile (protected)             |
 | POST   | /auth/logout        | Logout (invalidate token if using sessions) |
 
 ---
