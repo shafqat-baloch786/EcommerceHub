@@ -2,6 +2,7 @@ const asyncWrapper = require('../utils/asyncWrapper');
 const Category = require('../models/Category');
 const ErrorHandlerClass = require('../utils//ErrorHandlerClass');
 const slugify = require('slugify');
+const mongoose = require('mongoose');
 
 // Add new catgories to system
 const addCategory = asyncWrapper(async (req, res, next) => {
@@ -48,7 +49,36 @@ const getCategories = asyncWrapper(async (req, res, next) => {
     })
 });
 
+
+// View sinlge category
+const viewCategory = asyncWrapper(async (req, res, next) => {
+    const categoryId = req.params.id;
+
+    // Check if id in params is valid
+    if(!mongoose.Types.ObjectId.isValid(categoryId)) {
+        return next (new ErrorHandlerClass("Invalid id!", 400));
+    }
+
+    // Else find that category by id
+    const category = await Category.findById( categoryId );
+
+    // If no category found
+    if(!category) {
+        return next(new ErrorHandlerClass("Category not found!", 404));
+    }
+
+    // Else success response
+    return res.status(200).json({
+        success: true,
+        message: "Category found!",
+        category
+    });
+
+
+});
+
 module.exports = {
     addCategory,
     getCategories,
+    viewCategory,
 }
