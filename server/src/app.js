@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const asyncWrapper = require('./utils/asyncWrapper');
 const authRoute = require('./routes/authRoute');
+const categoryRoute = require('./routes/categoryRoute');
 const errorMiddleware = require('./middlewares/errorHandler');
 
 // HTTP headers for security
@@ -18,6 +19,9 @@ app.use(express.urlencoded({ extended: true })); // parse form data
 
 // Routes
 app.use('/api/auth', authRoute);
+
+// Category route
+app.use('/api', categoryRoute);
 
 // error middleware
 app.use(errorMiddleware);
