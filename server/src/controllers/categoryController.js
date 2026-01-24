@@ -74,11 +74,44 @@ const viewCategory = asyncWrapper(async (req, res, next) => {
         category
     });
 
-
 });
+
+
+// Edit/update category
+const updateCategory = asyncWrapper(async (req, res, next) => {
+    const { name, description, parentCategory } = req.body;
+    const categoryId = req.params.id;
+
+    // Check if id in params is valid
+    if(!mongoose.Types.ObjectId.isValid(categoryId)) {
+        return next (new ErrorHandlerClass("Invalid id!", 400));
+    } 
+
+    // Empty object to store updated data
+    const updates = {};
+    if(name) updates.name = name
+    if(description) updates.description = description
+    if(parentCategory) updates.parentCategory = parentCategory
+    
+    // Updated category 
+    const updatedData = await Category.findByIdAndUpdate(categoryId, updates, {
+        new: true,
+        runValidators: true,
+        context: 'query'
+    }).select('name description parentCategory');
+
+    // Success response
+    return res.status(200).json({
+        success: true,
+        message: "Category updated successfully!"
+    })
+});
+
+
 
 module.exports = {
     addCategory,
     getCategories,
     viewCategory,
+    updateCategory,
 }
