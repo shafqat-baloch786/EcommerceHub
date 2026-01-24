@@ -29,8 +29,26 @@ const addCategory = asyncWrapper(async (req, res, next) => {
     })
 });
 
+// View all categories
+const getCategories = asyncWrapper(async (req, res, next) => {
+    const categories = await Category.find({ isActive: true })
+    .select('name description parentCategory createdAt updatedAt')
+    .sort({ sortOrder: 1 });
 
+    // If no categoires found
+    if(categories.length === 0) {
+        return next(new ErrorHandlerClass("No categories found!", 404));
+    }
+    
+    // Else success
+    return res.status(200).json({
+        success: true,
+        message: "All categories!",
+        categories
+    })
+});
 
 module.exports = {
     addCategory,
+    getCategories,
 }
