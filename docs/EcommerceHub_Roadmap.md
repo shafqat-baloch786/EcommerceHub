@@ -38,7 +38,7 @@
 | GET    | /categories     | List all categories          |
 | GET    | /categories/:id | Get single category          |
 | POST   | /categories     | Create category (admin only) |
-| PUT    | /categories/:id | Update category (admin only) |
+| PATCH    | /categories/:id | Update category (admin only) |
 | DELETE | /categories/:id | Delete category (admin only) |
 
 ---
