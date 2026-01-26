@@ -108,10 +108,28 @@ const updateCategory = asyncWrapper(async (req, res, next) => {
 });
 
 
+// Delete category
+const deleteCategory = asyncWrapper(async (req, res, next) => {
+    const categoryId = req.params.id;
+
+     // Check if id in params is valid
+     if(!mongoose.Types.ObjectId.isValid(categoryId)) {
+        return next(new ErrorHandlerClass("Invalid id!", 400));
+     }
+
+    // Else delete category and throw success response
+    await Category.findByIdAndDelete( categoryId );
+    return res.status(200).json({
+        success: true,
+        message: "Category deleted successfully!"
+    })
+});
+
 
 module.exports = {
     addCategory,
     getCategories,
     viewCategory,
     updateCategory,
+    deleteCategory,
 }
