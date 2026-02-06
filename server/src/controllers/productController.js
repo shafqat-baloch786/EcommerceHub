@@ -11,9 +11,7 @@ const addProduct = asyncWrapper(async (req, res) => {
         stock,
         category
     });
-    if (!product) {
-        return next(new ErroHandlerClass("Product data not found in body request!", 404));
-    }
+
     res.status(201).json({
         success: true,
         message: "Product created successfully!",
