@@ -36,7 +36,6 @@ const register = asyncWrapper(async (req, res, next) => {
 });
 
 
-
 // User login/sign in
 const login = asyncWrapper(async (req, res, next) => {
     const { email, password } = req.body;

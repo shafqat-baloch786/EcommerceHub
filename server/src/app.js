@@ -3,9 +3,11 @@ const app = express();
 const helmet = require('helmet');
 const cors = require('cors');
 const asyncWrapper = require('./utils/asyncWrapper');
+const errorMiddleware = require('./middlewares/errorHandler');
 const authRoute = require('./routes/authRoute');
 const categoryRoute = require('./routes/categoryRoute');
-const errorMiddleware = require('./middlewares/errorHandler');
+const productRoute = require('./routes/productRoute');
+
 
 // HTTP headers for security
 app.use(helmet());
@@ -22,6 +24,9 @@ app.use('/api/auth', authRoute);
 
 // Category route
 app.use('/api', categoryRoute);
+
+// Product route
+app.use('/api', productRoute);
 
 // error middleware
 app.use(errorMiddleware);
