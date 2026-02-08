@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Product = require('../models/Product');
 const asyncWrapper = require('../utils/asyncWrapper');
 const ErrorHandlerClass = require('../utils/ErrorHandlerClass');
@@ -24,8 +25,8 @@ const addProduct = asyncWrapper(async (req, res) => {
 // View all products
 const viewProducts = asyncWrapper(async (req, res) => {
     const products = await Product.find({ isActive: true })
-    .sort({ createdAt: -1 })
-    .populate('category', 'name');
+        .sort({ createdAt: -1 })
+        .populate('category', 'name');
 
     // Success response
     return res.status(200).json({
@@ -40,10 +41,10 @@ const viewProducts = asyncWrapper(async (req, res) => {
 // View single product
 const viewProduct = asyncWrapper(async (req, res, next) => {
     const productId = req.params.id;
-    const product = await Product.findById( productId );
+    const product = await Product.findById(productId);
 
     // If product not found
-    if(!product) {
+    if (!product) {
         return next(new ErrorHandlerClass("Product not found!", 404));
     }
 
@@ -57,8 +58,47 @@ const viewProduct = asyncWrapper(async (req, res, next) => {
 });
 
 
+// Edit/Update product
+const updateProduct = asyncWrapper(async (req, res, next) => {
+
+    // Get data from request body and productId from params
+    const { name, price, stock, category } = req.body;
+    const productId = req.params.id;
+
+    // Check if product id is not valid
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+        return next(new ErrorHandler("Invalid product id!", 400));
+    }
+
+    // Adding data into udpates object
+    const updates = {};
+    if (name) updates.name = name
+    if (price) updates.price = price
+    if (stock) updates.stock = stock
+    if (category) updates.category = category
+
+    const newProduct = await Product.findByIdAndUpdate(productId, updates, {
+        new: true,
+        runValidators: true,
+        context: 'query'
+    });
+
+    // If product not found
+    if (!product) {
+        return next(new ErrorHandler("Product not found!", 404));
+    }
+    // Success response
+    return res.status(200).json({
+        success: true,
+        message: "Product updated successfully!"
+    })
+
+});
+
+
 module.exports = {
     addProduct,
     viewProducts,
     viewProduct,
+    updateProduct,
 }
