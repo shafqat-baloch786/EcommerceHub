@@ -91,9 +91,29 @@ const updateProduct = asyncWrapper(async (req, res, next) => {
     return res.status(200).json({
         success: true,
         message: "Product updated successfully!"
-    })
+    });
 
 });
+
+// Delete product
+const deleteProduct = asyncWrapper(async (req, res, next) => {
+    const productId = req.params.id;
+
+    // Check if id in params is valid
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+        return next(new ErrorHandlerClass("Invalid id!", 400));
+    }
+
+    // Delete product
+    await Product.findByIdAndDelete(productId);
+
+    // Success response
+    return res.status(200).json({
+        success: true,
+        message: "Product deleted successfully!"
+    });
+});
+
 
 
 module.exports = {
@@ -101,4 +121,5 @@ module.exports = {
     viewProducts,
     viewProduct,
     updateProduct,
+    deleteProduct,
 }
