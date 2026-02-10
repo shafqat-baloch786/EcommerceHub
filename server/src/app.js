@@ -7,6 +7,7 @@ const errorMiddleware = require('./middlewares/errorHandler');
 const authRoute = require('./routes/authRoute');
 const categoryRoute = require('./routes/categoryRoute');
 const productRoute = require('./routes/productRoute');
+const cartRoute = require('./routes/cartRoute');
 
 
 // HTTP headers for security
@@ -27,6 +28,9 @@ app.use('/api', categoryRoute);
 
 // Product route
 app.use('/api', productRoute);
+
+// Cart route
+app.use('/api', cartRoute);
 
 // error middleware
 app.use(errorMiddleware);
