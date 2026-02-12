@@ -4,6 +4,8 @@ const asyncWrapper = require('../utils/asyncWrapper');
 const ErrorHandlerClass = require('../utils/ErrorHandlerClass');
 const mongoose = require('mongoose');
 
+
+// Add to cart
 const addToCart = asyncWrapper(async (req, res, next) => {
     const userId = req.user._id;
     const { productId, quantity = 1 } = req.body;
@@ -76,6 +78,34 @@ const addToCart = asyncWrapper(async (req, res, next) => {
     });
 });
 
+
+// Get cart items
+const getCart = asyncWrapper(async (req, res, next) => {
+    const userId = req.user._id;
+
+    const cart = await Cart.findOne({ user: userId })
+        .populate("items.product");
+
+    // Check if cart is empty (no cart OR no items)
+    if (!cart || cart.items.length === 0) {
+        return res.status(200).json({
+            success: true,
+            message: "Cart is empty",
+            cart: {
+                items: [],
+            },
+        });
+    }
+
+    // Else return success response
+    return res.status(200).json({
+        success: true,
+        cart,
+    });
+});
+
+
 module.exports = {
     addToCart,
+    getCart,
 }
