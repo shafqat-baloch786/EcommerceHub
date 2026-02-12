@@ -197,6 +197,30 @@ const removeCartItem = asyncWrapper(async (req, res, next) => {
     });
 });
 
+// Clear cart
+const clearCart = asyncWrapper(async (req, res, next) => {
+    const userId = req.user._id;
+
+    // Find user's cart
+    const cart = await Cart.findOne({ user: userId });
+    if (!cart) {
+        return next(new ErrorHandlerClass("Cart not found!", 404));
+    }
+
+    // Remove all items from cart
+    cart.items = [];
+
+    // Save cart (totals auto-calculated by pre-save hook)
+    await cart.save();
+
+    // Return success response
+    return res.status(200).json({
+        success: true,
+        message: "Cart cleared successfully!",
+        cart,
+    });
+});
+
 
 
 
@@ -204,5 +228,6 @@ module.exports = {
     addToCart,
     getCart,
     updateCartItem,
-    removeCartItem
+    removeCartItem,
+    clearCart
 }
