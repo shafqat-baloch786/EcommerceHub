@@ -165,9 +165,44 @@ const updateCartItem = asyncWrapper(async (req, res, next) => {
 });
 
 
+// Remove items from cart
+const removeCartItem = asyncWrapper(async (req, res, next) => {
+    const userId = req.user._id;
+    const { productId } = req.params;
+
+    // Validate product ID
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+        return next(new ErrorHandlerClass("Invalid product id!", 400));
+    }
+
+    // Find user's cart
+    const cart = await Cart.findOne({ user: userId });
+    if (!cart) {
+        return next(new ErrorHandlerClass("Cart not found!", 404));
+    }
+
+    // Remove product from cart items
+    cart.items = cart.items.filter(
+        (item) => item.product.toString() !== productId
+    );
+
+    // Save cart (totals auto-calculated by pre-save hook)
+    await cart.save();
+
+    // Return success response
+    return res.status(200).json({
+        success: true,
+        message: "Item removed from cart!",
+        cart,
+    });
+});
+
+
+
 
 module.exports = {
     addToCart,
     getCart,
-    updateCartItem
+    updateCartItem,
+    removeCartItem
 }
