@@ -105,7 +105,69 @@ const getCart = asyncWrapper(async (req, res, next) => {
 });
 
 
+// Update cart items
+const updateCartItem = asyncWrapper(async (req, res, next) => {
+    const userId = req.user._id;
+    const { productId, quantity } = req.body;
+
+    // Validate product ID
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+        return next(new ErrorHandlerClass("Invalid product id!", 400));
+    }
+
+    // Validate quantity
+    if (quantity < 0) {
+        return next(new ErrorHandlerClass("Quantity cannot be negative!", 400));
+    }
+
+    // Find product in DB to check stock
+    const product = await Product.findById(productId);
+    if (!product) {
+        return next(new ErrorHandlerClass("Product not found!", 404));
+    }
+
+    // Find user's cart
+    const cart = await Cart.findOne({ user: userId });
+    if (!cart) {
+        return next(new ErrorHandlerClass("Cart not found!", 404));
+    }
+
+    // Find item in cart
+    const itemIndex = cart.items.findIndex(
+        (item) => item.product.toString() === productId
+    );
+
+    if (itemIndex === -1) {
+        return next(new ErrorHandlerClass("Product not in cart!", 404));
+    }
+
+    // If quantity is 0 → remove item
+    if (quantity === 0) {
+        cart.items.splice(itemIndex, 1);
+    } else {
+        // Check stock before updating
+        if (quantity > product.stock) {
+            return next(new ErrorHandlerClass("Not enough stock available!", 400));
+        }
+
+        // Update quantity
+        cart.items[itemIndex].quantity = quantity;
+    }
+
+    // Save cart (totals auto-calculated by pre-save hook)
+    await cart.save();
+
+    return res.status(200).json({
+        success: true,
+        message: "Cart updated successfully!",
+        cart,
+    });
+});
+
+
+
 module.exports = {
     addToCart,
     getCart,
+    updateCartItem
 }
